@@ -2,10 +2,10 @@
 #include "onewire.h"
 #include <util/delay.h>
 
-//переменные для поиска
+//variables for the search
 uint8_t onewire_rom_addr[8], onewire_right_bit, search_rom_count = 0;
 //////////////////////////////////////////////////////////////////////
-uint8_t onewire_reset(){
+uint8_t onewire_reset(void){
 	WIRE_DDR |=_BV(WIRE);
 	_delay_us(650);
 	WIRE_DDR &=~_BV(WIRE);
@@ -18,7 +18,7 @@ uint8_t onewire_reset(){
 	return 1;
 }
 //////////////////////////////////////////////////////////////////
-uint8_t onewire_init(){
+uint8_t onewire_init(void){
 	WIRE_DDR &=~_BV(WIRE);
 	WIRE_PORT &=~_BV(WIRE);
 	return onewire_reset();
@@ -36,7 +36,7 @@ void onewire_send_bit(uint8_t bit){
 	_delay_us(8);}
 }
 //////////////////////////////////////////////////////////////////
-uint8_t onewire_read_bit(){
+uint8_t onewire_read_bit(void){
 	uint8_t bit = 0;
 	WIRE_DDR |=_BV(WIRE);
 	_delay_us(3);
@@ -54,7 +54,7 @@ void onewire_send_byte(uint8_t byte){
 	byte >>=1;}
 }
 //////////////////////////////////////////////////////////////////
-uint8_t onewire_read_byte(){
+uint8_t onewire_read_byte(void){
 	uint8_t byte = 0;
 	for(uint8_t i=0;i<8;i++){
 	byte >>=1;
@@ -69,7 +69,7 @@ uint8_t onewire_crc(uint8_t crc, uint8_t byte){
 	return crc;
 }
 /////////////////////////////////////////////////////////////////////
-uint8_t onewire_skip_rom(){
+uint8_t onewire_skip_rom(void){
 	if(onewire_reset()) return 1;
 	onewire_send_byte(0xCC);
 	return 0;
@@ -91,13 +91,13 @@ uint8_t onewire_match_rom(uint8_t * rom_addr){
 	return 0;
 }
 /////////////////////////////////////////////////////////////////////
-void search_rom_init(){
+void search_rom_init(void){
 	for(uint8_t i=0;i<8;i++){
 	onewire_rom_addr[i] = 0;} 
 	onewire_right_bit = 65;
 }
 //////////////////////////////////////////////////////////////////
-uint8_t onewire_last_rom(){
+uint8_t onewire_last_rom(void){
 	return onewire_match_rom(&onewire_rom_addr[0]);
 }
 //////////////////////////////////////////////////////////////////

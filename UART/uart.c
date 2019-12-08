@@ -1,12 +1,12 @@
 ﻿#include <avr/io.h>
 #include "uart.h"
 
-uint16_t index_buf = 0;		//указатель на последний символ в uart буфере
-char buffer_uart[ELEMENTS];	//uart буфер для приема строк
-uint8_t recieve_count = 0;	//показатель завершения приема строки(байта)
+uint16_t index_buf = 0;		//pointer to the last character in the uart buffer
+char buffer_uart[ELEMENTS];	//uart buffer for receiving strings
+uint8_t recieve_count = 0;	//indicator of the completion of reception of the string(byte)
 
 //////////////////////////////////////////////////////
-void uart_init(unsigned long baud){ //Инициализация UARTа
+void uart_init(unsigned long baud){
 	#ifdef MKREG
     UBRR0H=0x00;
     UBRR0L=F_CPU/16/baud - 1;
@@ -22,7 +22,7 @@ void uart_init(unsigned long baud){ //Инициализация UARTа
 	#endif
 }
 ///////////////////////////////////////////////////////////////////////
-void uart_tr(uint8_t data){	//Передача одного байта	
+void uart_tr(uint8_t data){	
 	#ifdef MKREG
 	while ( !( UCSR0A & (1<<UDRE0)) );
     UDR0 = data;
@@ -32,20 +32,20 @@ void uart_tr(uint8_t data){	//Передача одного байта
 	#endif
 }
 /////////////////////////////////////////////////////
-void uart_send(char *string){ //Передача строки
+void uart_send(char *string){
     while(*string != '\0'){
         uart_tr(*string);
         string++;}
 }
 /////////////////////////////////////////////////////////////////////////
-void uart_sendln(char *str){ //Передача строки с переходом на новую
+void uart_sendln(char *str){
     uart_send(str);
     uart_tr('\r');
     uart_tr('\n');
 }
 
 ////////////////////////////////////////////////////////////////////////
-uint8_t uart_receive_byte(void){	//Прием одного байта
+uint8_t uart_receive_byte(void){
 	#ifdef MKREG
 	while ( !(UCSR0A & (1<<RXC0)) );
     return UDR0;
@@ -56,16 +56,16 @@ uint8_t uart_receive_byte(void){	//Прием одного байта
 }
 /////////////////////////////////////////////////////////////////////////
 #if ISR_COUNT
-void uart_receive(void){//Прием строки до символа '\r' 
+void uart_receive(void){	//Accept string up to '\r'
 	#ifdef MKREG
 	char symbol = UDR0; 
 	#else
 	char symbol = UDR; 
 	#endif
     uart_tr(symbol);
-    if(symbol == '\r')//при возврате каретки завершается заполнение buffer_uart
+    if(symbol == '\r')		//when the carriage return completes => filling of buffer_uart
     { uart_tr('\n'); recieve_count = 1; buffer_uart[index_buf] = '\0'; }
-	else {	if(symbol=='\b'){ //стирание символа
+	else {	if(symbol=='\b'){ //erasing a symbol
 	uart_tr(' ');
 	uart_tr('\b');
         if(index_buf>0) index_buf--; 

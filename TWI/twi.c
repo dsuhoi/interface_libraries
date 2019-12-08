@@ -2,7 +2,7 @@
 #include "twi.h"
 
 ///////////////////////////////////////////////////////
-void i2c_init(unsigned long f_scl){		 //частота передачи данных
+void i2c_init(unsigned long f_scl){		 //data transmission frequency
 	TWBR = (((F_CPU)/(f_scl)-16)/2);			
 	TWSR = 0;
 }
