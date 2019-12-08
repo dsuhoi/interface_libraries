@@ -10,7 +10,7 @@
 
 #define F_CPU 8000000UL	//frequency of the microcontroller
 #define ELEMENTS 512    //UART buffer size
-//clearing the UART buffer
+//erasing the UART buffer
 #define BUF_CLEAR {for(uint16_t i=0; i<ELEMENTS; buffer_uart[i++]=0); index_buf=0;}
 
 //the necessary microcontrollers can be added by yourself
