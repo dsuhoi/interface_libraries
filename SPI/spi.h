@@ -16,6 +16,7 @@
 #define SPI_DDR DDRB
 #define spi_delay _delay_us(2)
 
+/*#################################Functions#############################################*/
 void spi_init(void);			//initialization port
 void spi_start(void);			//start signal
 void spi_stop(void);			//stop signal

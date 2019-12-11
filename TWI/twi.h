@@ -7,6 +7,7 @@
 
 #define F_CPU 8000000UL //frequency of the microcontroller
 
+/*#################################Functions#############################################*/
 void twi_init(unsigned long);	 //initialization twi
 void twi_start(void);		 //start signal
 void twi_stop(void);		 //stop signal

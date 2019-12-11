@@ -14,7 +14,7 @@ void twi_start(void){
 //////////////////////////////////////////////////////
 void twi_stop(void){
 	TWCR = (1<<TWINT)|(1<<TWSTO)|(1<<TWEN);
-	while(!(TWCR & (1<<TWSTO)));
+	while(TWCR & (1<<TWSTO));
 }
 //////////////////////////////////////////////////////
 uint8_t twi_write_byte(uint8_t byte){

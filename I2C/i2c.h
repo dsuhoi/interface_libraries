@@ -17,6 +17,7 @@
 #define I2C_DDR DDRC
 #define i2c_delay _delay_us(5);
 
+/*#################################Functions#############################################*/
 void i2c_init(void);	//initialization port
 void i2c_start(void);	//start signal
 void i2c_stop(void);	//stop signal

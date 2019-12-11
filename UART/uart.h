@@ -18,6 +18,7 @@
 #define MKREG
 #endif
 
+/*######################################Functions################################################*/
 void uart_init(unsigned long baud); //initialization uart; baud - speed(4800,9600,19200...)
 void uart_tr(uint8_t); //byte transfering
 uint8_t uart_receive_byte(void); //byte recieving

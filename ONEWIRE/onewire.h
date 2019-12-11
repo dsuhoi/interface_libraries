@@ -12,6 +12,7 @@
 #define WIRE_PIN PINB
 #define WIRE 0 		//port 1-wire
 
+/*#################################Functions#############################################*/
 uint8_t onewire_init();				//initialization port
 uint8_t onewire_reset();			//reset signal
 void onewire_send_bit(uint8_t bit);		//bit transfer
