@@ -9,28 +9,28 @@ void twi_init(unsigned long f_scl){		 //data transmission frequency
 //////////////////////////////////////////////////////
 void twi_start(void){
 	TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN);
-	while(!(TWCR & _BV(TWINT)));
+	while(!(TWCR & (1<<TWINT)));
 }
 //////////////////////////////////////////////////////
 void twi_stop(void){
 	TWCR = (1<<TWINT)|(1<<TWSTO)|(1<<TWEN);
-	while(!(TWCR & _BV(TWSTO)));
+	while(!(TWCR & (1<<TWSTO)));
 }
 //////////////////////////////////////////////////////
 uint8_t twi_write_byte(uint8_t byte){
 	TWDR = byte;
-	TWCR = _BV(TWINT) | _BV(TWEN);
-	while(!(TWCR & _BV(TWINT)));
+	TWCR = (1<<TWINT) | (1<<TWEN);
+	while(!(TWCR & (1<<TWINT)));
 	return TWSR & 0xF8;
 }
 //////////////////////////////////////////////////////
 uint8_t twi_read_byte(uint8_t final_byte){
 	if(!final_byte)
-	TWCR = _BV(TWINT) | _BV(TWEN) | _BV(TWEA);
+	TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWEA);
 	else {
-	TWCR = _BV(TWINT) | _BV(TWEN);}
+	TWCR = (1<<TWINT) | (1<<TWEN);}
 
-	while(!(TWCR & _BV(TWINT)));
+	while(!(TWCR & (1<<TWINT)));
 	if((TWSR & 0xF8)!=0x58) return 0;
 	return TWDR;
 }
