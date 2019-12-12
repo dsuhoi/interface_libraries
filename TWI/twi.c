@@ -31,7 +31,7 @@ uint8_t twi_read_byte(uint8_t final_byte){
 	TWCR = (1<<TWINT) | (1<<TWEN);}
 
 	while(!(TWCR & (1<<TWINT)));
-	if((TWSR & 0xF8)!=0x58) return 0;
+	if((TWSR & 0xF8)!=0x58 && (TWSR & 0xF8)!=0x50) return 0;
 	return TWDR;
 }
 
