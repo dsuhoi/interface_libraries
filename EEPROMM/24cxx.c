@@ -1,5 +1,4 @@
 ﻿#include <avr/io.h>
-#include <stdlib.h>
 #include "../TWI/twi.h"
 #include "24cxx.h"
 
