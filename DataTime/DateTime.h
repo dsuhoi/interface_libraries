@@ -1,74 +1,68 @@
-/* Библиотека для работы с форматом даты  в виде строки (dd.mm.yyyy) (char*),
+﻿/* Библиотека для работы с форматом даты  в виде строки (dd.mm.yyyy) (char*),
  * день/месяц/год (integer) и кол-ва дней от нулевого года (long).
  * Исчисление ведется с 01.01.0000 по 31.12.9999 (больший диапазон дат не целесообразен).
  * (Библиотека также включает класс для работы с суточным временем (hh:mm:ss) и
  * класс, являющийся производных от класса даты и времени (hh:mm:ss/dd.mm.yyyy).)
  * Created by DSuhoi (2020). */
 
-#ifndef _DATATIME_H_
-#define _DATATIME_H_
+#ifndef _DateTime_H_
+#define _DateTime_H_
 
+#include <iostream>
 
-////////////////CONSTANTS///////////////////////
+////////////////DateTime////////////////////////
 
-const int DATA_LEN = 11;  //размер символьного массива даты (НЕ МЕНЕЕ 11 символов включая '\0')
-const int TIME_LEN = 9;   //размер символьного массива времени (НЕ МЕНЕЕ 9 символов включая '\0')
-const int ALLDATA_LEN = 20; //размер символьного массива полного времени (НЕ МЕНЕЕ 20 символов)
-
-////////////////DataTime////////////////////////
-
-class DataTime
+class DateTime
 {                //класс для хранения даты (dd.mm.yyyy) и взаимодействия с ней
 protected:
-    char data_str[DATA_LEN];    //символьный массив для даты
     long full_day;              //кол-во дней от 0 года
     int day;                    //кол-во дней в данном месяце
     int month;                  //кол-во месяцев в данном году
     int year;                   //кол-во лет
 
-    inline void DATA_CLEAN();    //функия очистки символьного массива
-    inline void DATA_INLINE();   //функция обработки принятой даты (строки)
-
-    void StringToData();         //перевод строки в дни, месяцы и годы
-    void DataToString();         //перевод в формат dd.mm.yyyy
-    void DataToFullDays();       //перевод даты в кол-во дней от 0 года
-    void FullDaysToData();       //перевод кол-ва дней от 0 года в дни, месяцы и годы
+    bool CheckDate();            //проверка полученной даты
+    bool StringToDate(char*);    //перевод строки в дни, месяцы и годы
+    bool DateToFullDays();       //перевод даты в кол-во дней от 0 года
+    void FullDaysToDate();       //перевод кол-ва дней от 0 года в дни, месяцы и годы
 public:
-    DataTime();             //пустой конструктор на дату (01.01.0000)
-    DataTime(char*);        //конструктор через строку
-    DataTime(long);         //конструктор через кол-во дней от 0 года
-    DataTime(int d,int m,int y);  //конструктор через ручную утсановку даты (день, месяц, год)
+    DateTime();             //пустой конструктор на дату (01.01.0000)
+    DateTime(char*);        //конструктор через строку
+    DateTime(long);         //конструктор через кол-во дней от 0 года
+    DateTime(int d,int m,int y);  //конструктор через ручную утсановку даты (день, месяц, год)
     ////////////////////////МЕТОДЫ////////////////////////////////
     int& SetDay();          //установка/получение кол-ва дней в данном месяце
     int& SetMonth();        //установка/получение кол-ва месяцев в данном году
     int& SetYear();         //установка/получение кол-ва лет
-    long& SetFullDays();    //установка/получение кол-ва дней от 0 года
-    char* DisplayData();    //вывод даты в формате dd.mm.yyyy
-    void WriteData();       //установка даты через строку
-    void SaveData();        //сохранение даты после ручного ввода через методы (Set)
+    long& SetFullDays();    //установка/получение кол-ва дней от 0 года 
+    char* DisplayDate();    //вывод даты в формате dd.mm.yyyy
+    void WriteDate();       //установка даты через строку
+    void SaveDate();        //сохранение даты после ручного ввода через методы (Set)
     ///////////////////////ОПЕРАТОРЫ/////////////////////////////////
     //перегрузка унарных операторов
-    const DataTime& operator ++();       //префиксный инкремент
-    const DataTime& operator ++(int);    //постфиксный инкремент
-    const DataTime& operator --();       //префиксный денкремент
-    const DataTime& operator --(int);    //постфиксный денкремент
+    const DateTime& operator ++();       //префиксный инкремент
+    const DateTime& operator ++(int);    //постфиксный инкремент
+    const DateTime& operator --();       //префиксный денкремент
+    const DateTime& operator --(int);    //постфиксный денкремент
     //перегрузка операторов "прибавления/вычитания"
-    const DataTime& operator +=(const long);     //прибавляем дни
-    const DataTime& operator -=(const long);     //вычитаем дни
-    const DataTime& operator +=(DataTime&);      //складываем дату
-    const DataTime& operator -=(DataTime&);      //вычитаем дату
+    const DateTime& operator +=(const long);     //прибавляем дни
+    const DateTime& operator -=(const long);     //вычитаем дни
+    const DateTime& operator +=(DateTime&);      //складываем дату
+    const DateTime& operator -=(DateTime&);      //вычитаем дату
     //перегрузка операторов сравнения
-    bool operator ==(DataTime&);
-    bool operator !=(DataTime&);
-    bool operator <(DataTime&);
-    bool operator <=(DataTime&);
-    bool operator >(DataTime&);
-    bool operator >=(DataTime&);
+    bool operator ==(DateTime&);
+    bool operator !=(DateTime&);
+    bool operator <(DateTime&);
+    bool operator <=(DateTime&);
+    bool operator >(DateTime&);
+    bool operator >=(DateTime&);
     //перегрузка операторов сложения/вычитания
-    const DataTime operator +(const long);   //перегрузка оператора сложения даты и дней
-    const DataTime operator -(const long);   //перегрузка оператора вычитания даты и дня
-    const DataTime operator +(DataTime&);    //перегрузка оператора сложения двух дат
-    const DataTime operator -(DataTime&);    //перегрузка оператора вычитания двух дат
+    const DateTime operator +(const long);   //перегрузка оператора сложения даты и дней
+    const DateTime operator -(const long);   //перегрузка оператора вычитания даты и дня
+    const DateTime operator +(DateTime&);    //перегрузка оператора сложения двух дат
+    const DateTime operator -(DateTime&);    //перегрузка оператора вычитания двух дат
+    //перегрузка операторов ввода/вывода
+    friend std::ostream& operator <<(std::ostream&, DateTime&); //перегрузка оператора вывода
+    friend void operator >>(std::istream&, DateTime&);      //перегруза оператора ввода
 };
 
 ////////////////ClockTime///////////////////////
@@ -76,19 +70,15 @@ public:
 class ClockTime
 {                   //класс для хранения времени (hh:mm:ss) и взаимодействия с ним
 protected:
-    char time_str[TIME_LEN];    //символьный массив для времени
     long full_second;           //кол-во секунд с начала суток(00:00:00) - общие секунды
-    int second;                 //кол-во секунд в данной минуте
-    int minute;                 //кол-во минут в данном часе
     int hour;                   //кол-во часов
+    int minute;                 //кол-во минут в данном часе
+    int second;                 //кол-во секунд в данной минуте
 
-    inline void TIME_CLEAN();     //функия очистки символьного массива
-    inline void TIME_INLINE();    //функция обработки принятого времени (строки)
-
-    void StringToTime();        //перевод строки в часы, минуты и секунды
-    void TimeToString();        //перевод времени в строку
-    void TimeToFullSecond();    //перевод времени в общие секунды
-    virtual void FullSecondToTime();    //перевод общих секунд в часы, минуты и секунды
+    bool CheckTime();           //проверка полученного времени
+    bool StringToTime(char*);   //перевод строки в часы, минуты и секунды
+    bool TimeToFullSecond();    //перевод времени в общие секунды
+    int FullSecondToTime();     //перевод общих секунд в часы, минуты и секунды
 public:
     ClockTime();                    //пустой конструктор на время (00:00:00)
     ClockTime(char*);               //конструктор через строку
@@ -126,64 +116,65 @@ public:
     const ClockTime operator -(const long);    //перегрузка оператора вычитания времени и секунд
     const ClockTime operator +(ClockTime&);    //перегрузка оператора сложения двух времен
     const ClockTime operator -(ClockTime&);    //перегрузка оператора вычитания двух времен
+    //перегрузка операции ввода/вывода
+    friend std::ostream& operator <<(std::ostream, ClockTime&); //перегрузка оператора вывода
+    friend void operator >>(std::istream&, ClockTime&);     //перегрузка оператора ввода
 };
 
-///////////////AllDataTime//////////////////////
+///////////////AllDateTime//////////////////////
 
-class AllDataTime : public DataTime, public ClockTime
+class AllDateTime : public DateTime, public ClockTime
 {                   //класс для хранения полной даты (hh:mm:ss/dd.mm.yyyy) и взаимодействия с ней
-private:
-    char alldata_str[ALLDATA_LEN];      //символьный массив для даты и времени
 protected:
-    inline void ALLDATA_CLEAN();        //функия очистки символьного массива
-    inline void STR_INLINE();           //функция обработки принятой полной даты (строки)
-
-    void StringToAllData();             //перевод строки в дату и время (полную дату)
-    void AllDataToString();             //перевод даты и времени в строку
-    void AllDataToFullParam();          //перевод полной даты в обшие секунды и дни с 0 года
-    void FullParamToAllData();          //перевод общих параметров в полную дату
-    virtual void FullSecondToTime();    //переопределение метода перевода общих секунд во время
+    bool CheckAllDate();                //проверка полученной полной даты
+    bool StringToAllDate(char*);        //перевод строки в дату и время (полную дату)
+    bool AllDateToFullParam();          //перевод полной даты в обшие секунды и дни с 0 года
+    void FullParamToAllDate();          //перевод общих параметров в полную дату
 public:
-    AllDataTime();          //пустой конструктор на полную дату (00:00:00/01.01.0000)
-    AllDataTime(int h, int mi, int s, int d, int mo, int y);    //конструктор через время и дату
-    AllDataTime(int d, int mo, int y);      //конструктор через дату (00:00:00/dd.mm.yyyy)
-    AllDataTime(long t, long d);        //конструктор через общие параметры (t - секунды, d - дни)
+    AllDateTime();          //пустой конструктор на полную дату (00:00:00/01.01.0000)
+    AllDateTime(char*);     //конструктор через строку
+    AllDateTime(int h, int mi, int s, int d, int mo, int y);    //конструктор через время и дату
+    AllDateTime(int d, int mo, int y);      //конструктор через дату (00:00:00/dd.mm.yyyy)
+    AllDateTime(long t, long d);        //конструктор через общие параметры (t - секунды, d - дни)
     ////////////////////////МЕТОДЫ////////////////////////////////
-    char* DisplayAllData();      //вывод полной даты в формате (hh:mm:ss/dd.mm.yyyy)
-    void WriteAllData();         //установка полной даты через строку
-    void SaveAllData();          //сохранение полной даты после ручного ввода через методы (Set)
+    char* DisplayAllDate();      //вывод полной даты в формате (hh:mm:ss/dd.mm.yyyy)
+    void WriteAllDate();         //установка полной даты через строку
+    void SaveAllDate();          //сохранение полной даты после ручного ввода через методы (Set)
     ///////////////////////ОПЕРАТОРЫ/////////////////////////////////
     //перегрузка унарных операторов
-    const AllDataTime& operator ++();       //префиксный инкремент
-    const AllDataTime& operator ++(int);    //постфиксный инкремент
-    const AllDataTime& operator --();       //префиксный денкремент
-    const AllDataTime& operator --(int);    //постфиксный денкремент
+    const AllDateTime& operator ++();       //префиксный инкремент
+    const AllDateTime& operator ++(int);    //постфиксный инкремент
+    const AllDateTime& operator --();       //префиксный денкремент
+    const AllDateTime& operator --(int);    //постфиксный денкремент
     //перегрузка операторов "прибавления/вычитания"
-    const AllDataTime& operator +=(const long);     //прибавляем секунды
-    const AllDataTime& operator -=(const long);     //вычитаем секунды
-    const AllDataTime& operator +=(DataTime&);      //складываем время
-    const AllDataTime& operator -=(DataTime&);      //вычитаем время
-    const AllDataTime& operator +=(ClockTime&);     //складываем дату
-    const AllDataTime& operator -=(ClockTime&);     //вычитаем дату
-    const AllDataTime& operator +=(AllDataTime&);   //складываем полную дату
-    const AllDataTime& operator -=(AllDataTime&);   //вычитаем полную дату
+    const AllDateTime& operator +=(const long);     //прибавляем секунды
+    const AllDateTime& operator -=(const long);     //вычитаем секунды
+    const AllDateTime& operator +=(DateTime&);      //складываем время
+    const AllDateTime& operator -=(DateTime&);      //вычитаем время
+    const AllDateTime& operator +=(ClockTime&);     //складываем дату
+    const AllDateTime& operator -=(ClockTime&);     //вычитаем дату
+    const AllDateTime& operator +=(AllDateTime&);   //складываем полную дату
+    const AllDateTime& operator -=(AllDateTime&);   //вычитаем полную дату
     //перегрузка операторов сравнения
-    bool operator==(AllDataTime&);
-    bool operator!=(AllDataTime&);
-    bool operator<(AllDataTime&);
-    bool operator<=(AllDataTime&);
-    bool operator>(AllDataTime&);
-    bool operator>=(AllDataTime&);
+    bool operator ==(AllDateTime&);
+    bool operator !=(AllDateTime&);
+    bool operator <(AllDateTime&);
+    bool operator <=(AllDateTime&);
+    bool operator >(AllDateTime&);
+    bool operator >=(AllDateTime&);
     //перегрузка операторов сложения/вычитания
-    const AllDataTime operator +(const long);  //перегрузка оператора сложения полной даты и секунд
-    const AllDataTime operator -(const long);  //перегрузка оператора вычитания полной даты и секунд
-    const AllDataTime operator +(DataTime&);   //перегрузка оператора сложения полной даты и даты
-    const AllDataTime operator -(DataTime&);   //перегрузка оператора вычитания полной даты и даты
-    const AllDataTime operator +(ClockTime&);  //перегрузка оператора сложения полной даты и времени
-    const AllDataTime operator -(ClockTime&);  //перегрузка оператора вычитания полной даты и времени
-    const AllDataTime operator +(AllDataTime&);   //перегрузка оператора сложения двух полных дат
-    const AllDataTime operator -(AllDataTime&);   //перегрузка оператора вычитания двух полных дат
+    const AllDateTime operator +(const long);  //перегрузка оператора сложения полной даты и секунд
+    const AllDateTime operator -(const long);  //перегрузка оператора вычитания полной даты и секунд
+    const AllDateTime operator +(DateTime&);   //перегрузка оператора сложения полной даты и даты
+    const AllDateTime operator -(DateTime&);   //перегрузка оператора вычитания полной даты и даты
+    const AllDateTime operator +(ClockTime&);  //перегрузка оператора сложения полной даты и времени
+    const AllDateTime operator -(ClockTime&);  //перегрузка оператора вычитания полной даты и времени
+    const AllDateTime operator +(AllDateTime&);   //перегрузка оператора сложения двух полных дат
+    const AllDateTime operator -(AllDateTime&);   //перегрузка оператора вычитания двух полных дат
+    //перегрузка операторов ввода/вывода
+    friend std::ostream& operator <<(std::ostream&, AllDateTime&);  //перегрузка оператора вывода
+    friend void operator >>(std::istream&, AllDateTime&);       //перегрузка оператора ввода
 };
 
 
-#endif // _DATATIME_H_
+#endif // _DateTime_H_

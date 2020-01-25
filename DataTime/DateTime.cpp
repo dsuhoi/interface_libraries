@@ -1,126 +1,125 @@
-//Created by DSuhoi (2020).//
+﻿//Created by DSuhoi (2020).//
 #include <iostream>
 #include <cstring>
 #include "DateTime.h"
 
 
-//////////////////////DataTime//////////////////////////////
+//////////////////////DateTime//////////////////////////////
 ///////////////////////МЕТОДЫ//////////////////////////////
 
-    //функия очистки символьного массива
-inline void DataTime::DATA_CLEAN()
-{
-     for(int i=0;i<DATA_LEN; data_str[i++]=0);   //очистка массива
-}
-
-    //функция обработки принятой даты (строки)
-inline void DataTime::DATA_INLINE()
-{
-    for(;;) //пока не будет соблюден формат введенной даты
-    {
-        DATA_CLEAN();
-        scanf("%s",data_str);
-        if(data_str[2]!='.' || data_str[5]!='.' || data_str[10]!=0)
-        { std::cout << "ERROR: Print Date(dd.mm.yyyy)!" <<std::endl; }
-        else    //если все принято, то выходим из цикла
-        { break; }
-    }
-}
-
-
     //пустой конструктор на дату (01.01.0000)
-DataTime::DataTime()
+DateTime::DateTime()
 {
     day = 1; month = 1; year = 0; full_day = 1; //установка по умолчанию всех данных
-    DataToString();
 }
 
     //конструктор через кол-во дней от 0 года
-DataTime::DataTime(long l) : full_day(l)
-{ FullDaysToData(); DataToString(); }
+DateTime::DateTime(long l) : full_day(l)
+{ FullDaysToDate(); }
 
     //конструктор через ручную утсановку даты (день, месяц, год)
-DataTime::DataTime(int d, int m, int y) : day(d), month(m), year(y)
-{ DataToFullDays(); DataToString(); }
+DateTime::DateTime(int d, int m, int y) : day(d), month(m), year(y)
+{
+    if(!DateToFullDays()) *this = DateTime();
+}
 
     //конструктор через строку
-DataTime::DataTime(char *buff)
+DateTime::DateTime(char *buff)
 {
-    strcpy(data_str,buff);  //копируем строку в массив для даты
-    StringToData();
-    DataToFullDays();
+    if(!StringToDate(buff)) *this = DateTime();
+    DateToFullDays();
 }
 
     //установка/получение кол-ва дней в данном месяце
-int& DataTime::SetDay()
+int& DateTime::SetDay()
 {
     return day;
 }
 
     //установка/получение кол-ва месяцев в данном году
-int& DataTime::SetMonth()
+int& DateTime::SetMonth()
 {
     return month;
 }
 
     //установка/получение кол-ва лет
-int& DataTime::SetYear()
+int& DateTime::SetYear()
 {
     return year;
 }
 
     //установка/получение кол-ва дней от 0 года
-long& DataTime::SetFullDays()
+long& DateTime::SetFullDays()
 {
-    DataToFullDays();
     return full_day;
 }
 
     //вывод даты в формате dd.mm.yyyy
-char* DataTime::DisplayData()
+char* DateTime::DisplayDate()
 {
-    DataToString();
-    return data_str;
+    static char date_str[11];
+    for(int i = 0; i < 11; i++) date_str[i] = 0;
+    date_str[2]=date_str[5]='.';
+    date_str[0] = day/10 + '0';
+    date_str[1] = (day%10) + '0';
+    date_str[3] = month/10 + '0';
+    date_str[4] = (month%10) + '0';
+    date_str[6] = year/1000 + '0';
+    date_str[7] = (year/100 - (year/1000)*10) + '0';
+    if(year>99)
+    {
+    date_str[8] = (year/10 - (year/100)*10) + '0';
+    date_str[9] = (year - (year/10)*10) + '0';
+    }
+    else
+    {
+    date_str[8] = year/10 + '0';
+    date_str[9] = (year - (year/10)*10) + '0';
+    }
+    date_str[10] = 0;
+    return date_str;
 }
 
 /////////////////////ФУНКЦИИ ПРИВЕДЕНИЯ///////////////////////////
 
-    //перевод строки в дни, месяцы и годы
-void DataTime::StringToData()
+    //проверка полученной даты
+bool DateTime::CheckDate()
 {
-    day = (data_str[0]-'0')*10 + (data_str[1]-'0');
-    month = (data_str[3]-'0')*10 + (data_str[4]-'0');
-    year = (data_str[6]-'0')*1000 + (data_str[7]-'0')*100 + (data_str[8]-'0')*10 + (data_str[9]-'0');
+    if(day < 1) return 0;
+    if(year < 0 || year > 9999) return 0;
+
+        if (month == 4 || month == 6 || month == 9 || month == 11)
+        { if (day > 30) return 0; }
+        else if (month == 2)
+        {
+            if(((!(year%4)&&year%100) || !(year%400))&&year)
+            { if(day > 29) return 0; }
+            else
+            { if(day > 28) return 0; }
+        }
+        else if ((month > 0)&&(month < 13))
+        { if(day > 31) return 0; }
+        else
+        { return 0; }
+
+        return 1;
 }
 
-    //перевод в формат dd.mm.yyyy
-void DataTime::DataToString()
+    //перевод строки в дни, месяцы и годы
+bool DateTime::StringToDate(char* date_str)
 {
-    DATA_CLEAN();
-    data_str[2]=data_str[5]='.';
-    data_str[0] = day/10 + '0';
-    data_str[1] = (day%10) + '0';
-    data_str[3] = month/10 + '0';
-    data_str[4] = (month%10) + '0';
-    data_str[6] = year/1000 + '0';
-    data_str[7] = (year/100 - (year/1000)*10) + '0';
-    if(year>99)
-    {
-    data_str[8] = (year/10 - (year/100)*10) + '0';
-    data_str[9] = (year - (year/10)*10) + '0';
-    }
-    else
-    {
-    data_str[8] = year/10 + '0';
-    data_str[9] = (year - (year/10)*10) + '0';
-    }
+    day = (date_str[0]-'0')*10 + (date_str[1]-'0');
+    month = (date_str[3]-'0')*10 + (date_str[4]-'0');
+    year = (date_str[6]-'0')*1000 + (date_str[7]-'0')*100 + (date_str[8]-'0')*10 + (date_str[9]-'0');
+
+    return CheckDate();
 }
 
     //перевод даты в кол-во дней от 0 года
-void DataTime::DataToFullDays()
+bool DateTime::DateToFullDays()
 {
     full_day = 0;   //сбрасываем кол-во дней
-    bool visokos_count = (((!(year%4))&&(year%100)) || (!(year%400)))&&year; //определение високосного года
+    bool visokos_count = ((!(year%4)&&year%100) || !(year%400))&&year; //определение високосного года
     int visokos_num = year/4 - (year/100 - year/400); //кол-во високосных лет
 
     switch (month)
@@ -171,17 +170,19 @@ void DataTime::DataToFullDays()
         if(visokos_count) full_day += 335 + day;
             else full_day += 334 + day;
         break;
-    default: std::cout << "ERROR: MONTH!" << std::endl; //если как-то ввели неправильный месяц...
+    default: std::cout << "ERROR: DATE!" << std::endl; //если как-то ввели неправильный месяц...
         break;
     }
 
     if(visokos_count) visokos_num--;  //погрешность на 0 високосный год
 
     full_day +=365*(year - visokos_num) + 366*visokos_num;  //прибавление дней по годам
+
+    return CheckDate();
 }
 
     //перевод кол-ва дней от 0 года в дни, месяцы и годы
-void DataTime::FullDaysToData()
+void DateTime::FullDaysToDate()
 {
     long data_x = full_day;     //создаем переменную для временного хранения данных
     int year_x = 0, month_x = 0;    //переменные для хранения года и месяца
@@ -196,7 +197,7 @@ void DataTime::FullDaysToData()
         data_x -=365;   //если не високосный...
     }
 
-    ( (((!(year_x%4))&&(year_x%100))||(!(year_x%400)))&&year_x )
+    ( ((!(year_x%4)&&year_x%100)||!(year_x%400))&&year_x )
             ? vesokos_count = 1 : vesokos_count = 0;
 
     //определяем месяц и день
@@ -268,124 +269,131 @@ void DataTime::FullDaysToData()
 }
 
 //////////////////////////////////////////////////////////////////
-    //установка даты через строку
-void DataTime::WriteData()
+    //установка даты через ввод
+void DateTime::WriteDate()
 {
-    DATA_INLINE();       //принимаем строку
-    StringToData();     //переводим строку в дату
-    DataToFullDays();   //определяем кол-во дней с 0 года
+    char* date_str = new char[11];
+    for(;;) //пока не будет соблюден формат введенной даты
+    {
+        scanf("%s",date_str);
+        if(!(StringToDate(date_str) && date_str[2]=='.' && date_str[5]=='.' && date_str[10]==0))
+        { std::cout << "ERROR: Print Date(dd.mm.yyyy)!" <<std::endl; }
+        else    //если все принято, то выходим из цикла
+        { break; }
+    }
+    DateToFullDays();   //определяем кол-во дней с 0 года
+    delete [] date_str;
 }
 
     //сохранение даты после ручного ввода через методы (Set)
-void DataTime::SaveData()
-{
-    if(full_day <= 1)       //если меняли дату,
-        DataToFullDays();   //то сохраняем кол-во дней с 0 года
-    else                    //если меняли кол-во дней с 0 года,
-        FullDaysToData();   //то сохраняем дату
-    DataToString();         //и строку
+void DateTime::SaveDate()
+{        //если меняли дату,
+    if(full_day <= 1)
+    {   //то сохраняем кол-во дней с 0 года
+        if(!DateToFullDays()) *this = DateTime();
+    }
+    else FullDaysToDate();   //сохраняем дату
 }
-
 
 ///////////////////////ОПЕРАТОРЫ/////////////////////////////////
 //////////////Перегрузка унарных операторов//////////////////////
 
     //префиксный инкремент
-const DataTime& DataTime::operator ++()
+const DateTime& DateTime::operator ++()
 {
     this->SetFullDays()++;
-    this->FullDaysToData();
+    this->FullDaysToDate();
     return *this;
 }
 
     //постфиксный инкремент
-const DataTime& DataTime::operator ++(int)
+const DateTime& DateTime::operator ++(int)
 {
-    DataTime* tmp = this;
+    DateTime* tmp = this;
     this->SetFullDays()++;
-    this->FullDaysToData();
+    this->FullDaysToDate();
     return *tmp;
 }
 
     //префиксный денкремент
-const DataTime& DataTime::operator --()
+const DateTime& DateTime::operator --()
 {
     this->SetFullDays()--;
-    this->FullDaysToData();
+    this->FullDaysToDate();
     return *this;
 }
 
     //постфиксный денкремент
-const DataTime& DataTime::operator --(int)
+const DateTime& DateTime::operator --(int)
 {
-    DataTime* tmp = this;
+    DateTime* tmp = this;
     this->SetFullDays()--;
-    this->FullDaysToData();
+    this->FullDaysToDate();
     return *tmp;
 }
 
 /////////Перегрузка операторов "прибавления/вычитания"////////////
 
     //прибавляем дни
-const DataTime& DataTime::operator +=(const long d)
+const DateTime& DateTime::operator +=(const long d)
 {
     this->SetFullDays() += d;
-    this->FullDaysToData();
+    this->FullDaysToDate();
     return *this;
 }
 
     //вычитаем дни
-const DataTime& DataTime::operator -=(const long d)
+const DateTime& DateTime::operator -=(const long d)
 {
     this->SetFullDays() -= d;
-    this->FullDaysToData();
+    this->FullDaysToDate();
     return *this;
 }
 
     //складываем дату
-const DataTime& DataTime::operator +=(DataTime& d)
+const DateTime& DateTime::operator +=(DateTime& d)
 {
     this->SetFullDays() += d.SetFullDays();
-    this->FullDaysToData();
+    this->FullDaysToDate();
     return *this;
 }
 
     //вычитаем дату
-const DataTime& DataTime::operator -=(DataTime& d)
+const DateTime& DateTime::operator -=(DateTime& d)
 {
     this->SetFullDays() -= d.SetFullDays();
-    this->FullDaysToData();
+    this->FullDaysToDate();
     return *this;
 }
 
 ///////////////Перегрузка операторов сравнения/////////////////////
 
-bool DataTime::operator ==(DataTime& d)
+bool DateTime::operator ==(DateTime& d)
 {
     return (this->SetFullDays() == d.SetFullDays()) ? true : false;
 }
 
-bool DataTime::operator !=(DataTime& d)
+bool DateTime::operator !=(DateTime& d)
 {
     return (*this == d) ? false : true;
 }
 
-bool DataTime::operator <(DataTime& d)
+bool DateTime::operator <(DateTime& d)
 {
     return (this->SetFullDays() < d.SetFullDays()) ? true : false;
 }
 
-bool DataTime::operator <=(DataTime& d)
+bool DateTime::operator <=(DateTime& d)
 {
     return ((*this < d) || (*this == d)) ? true : false;
 }
 
-bool DataTime::operator >(DataTime& d)
+bool DateTime::operator >(DateTime& d)
 {
     return ((*this == d) || (*this < d)) ? false : true;
 }
 
-bool DataTime::operator >=(DataTime& d)
+bool DateTime::operator >=(DateTime& d)
 {
     return ((*this > d) || (*this == d)) ? true : false;
 }
@@ -393,29 +401,48 @@ bool DataTime::operator >=(DataTime& d)
 /////////////Перегрузка операторов сложения/вычитания///////////////
 
     //перегрузка оператора сложения даты и дней
-const DataTime DataTime::operator +(const long d)
+const DateTime DateTime::operator +(const long d)
 {
-    return DataTime(this->SetFullDays() + d);
+    return DateTime(this->SetFullDays() + d);
 }
 
     //перегрузка оператора вычитания даты и дня
-const DataTime DataTime::operator -(const long d)
+const DateTime DateTime::operator -(const long d)
 {
-    return DataTime(this->SetFullDays() - d);
+    return DateTime(this->SetFullDays() - d);
 }
 
     //перегрузка оператора сложения дат
-const DataTime DataTime::operator +(DataTime& d)
+const DateTime DateTime::operator +(DateTime& d)
 {
-    return DataTime(this->SetFullDays() + d.SetFullDays());
+    return DateTime(this->SetFullDays() + d.SetFullDays());
 }
 
     //перегрузка оператора вычитания двух дат
-const DataTime DataTime::operator -(DataTime& d)
+const DateTime DateTime::operator -(DateTime& d)
 {
-    return DataTime(this->SetFullDays() - d.SetFullDays());
+    return DateTime(this->SetFullDays() - d.SetFullDays());
 }
 
+//////////////////Перегрузка операторов ввода/вывода///////////////////////
+    //перегрузка оператора вывода
+std::ostream& operator <<(std::ostream& out, DateTime& d)
+{
+    out << d.DisplayDate();
+    return out;
+}
+/*
+std::istream& operator >>(std::istream& in, DateTime& d)
+{
+    char* buff = new char[11];
+    in >> buff;
+    d = DateTime(buff);
+    if(!in)
+    { d = DateTime(); }
+    delete [] buff;
+    return in;
+}
+*/
 
 //////////////////////////////////////////////////////////////////////
 
@@ -423,39 +450,16 @@ const DataTime DataTime::operator -(DataTime& d)
 ////////////////////////ClockTime///////////////////////////////////
 /////////////////////////МЕТОДЫ////////////////////////////////////
 
-    //функия очистки символьного массива
-inline void ClockTime::TIME_CLEAN()
-{
-    for(int i=0;i<TIME_LEN; time_str[i++]=0);   //очистка массива
-}
-
-    //функция обработки принятого времени (строки)
-inline void ClockTime::TIME_INLINE()
-{
-    for(;;) //пока не будет соблюден формат введенного времени
-    {
-        TIME_CLEAN();
-        scanf("%s",time_str);
-        if(time_str[2]!=':' || time_str[5]!=':' || time_str[8]!=0)
-        { std::cout << "ERROR: Print Time(hh.mm.ss)!" <<std::endl; }
-        else    //если все принято, то выходим из цикла
-        { break; }
-    }
-}
-
-
     //пустой конструктор на время (00:00:00)
 ClockTime::ClockTime()
 {
     second = 0; minute = 0; hour = 0, full_second = 0;  //установка по умолчанию всех данных
-    TimeToString();
 }
 
     //конструктор через строку
 ClockTime::ClockTime(char* buff)
 {
-    strcpy(time_str,buff);  //копируем строку в массив для времени
-    TimeToString();
+    if(!StringToTime(buff)) *this = ClockTime();
     TimeToFullSecond();
 }
 
@@ -463,22 +467,19 @@ ClockTime::ClockTime(char* buff)
 ClockTime::ClockTime(long t) : full_second(t)
 {
     FullSecondToTime();
-    TimeToString();
 }
 
     //конструктор через часы и минуты (секунды обнулены)
 ClockTime::ClockTime(int h, int m) : hour(h), minute(m)
 {
     second = 0;
-    TimeToFullSecond();
-    TimeToString();
+    if(!TimeToFullSecond()) *this = ClockTime();
 }
 
     //конструктор через часы, минуты и секунды
 ClockTime::ClockTime(int h, int m, int s) : hour(h), minute(m), second(s)
 {
-    TimeToFullSecond();
-    TimeToString();
+    if(!TimeToFullSecond()) *this = ClockTime();
 }
 
     //установка/получение кол-ва секунд в данной минуте
@@ -502,31 +503,14 @@ int& ClockTime::SetHour()
     //установка/получение кол-ва общих секунд
 long& ClockTime::SetFullSecond()
 {
-    TimeToFullSecond();
     return full_second;
 }
 
     //вывод времени в формате (hh:mm:ss)
 char* ClockTime::DisplayTime()
 {
-    TimeToString();
-    return time_str;
-}
-
-/////////////////////ФУНКЦИИ ПРИВЕДЕНИЯ/////////////////////////
-
-    //перевод строки в часы, минуты и секунды
-void ClockTime::StringToTime()
-{
-    hour = (time_str[0]-'0')*10 + (time_str[1]-'0');
-    minute = (time_str[3]-'0')*10 + (time_str[4]-'0');
-    second = (time_str[6]-'0')*10 + (time_str[7]-'0');
-}
-
-    //перевод времени в строку
-void ClockTime::TimeToString()
-{
-    TIME_CLEAN();
+    static char time_str[9];
+    for(int i = 0; i < 9; i++) time_str[i] = 0;
     time_str[2]=time_str[5]=':';
     time_str[0] = hour/10 + '0';
     time_str[1] = (hour%10) + '0';
@@ -534,22 +518,53 @@ void ClockTime::TimeToString()
     time_str[4] = (minute%10) + '0';
     time_str[6] = second/10 + '0';
     time_str[7] = (second%10) + '0';
+    time_str[8] = 0;
+    return time_str;
+}
+
+/////////////////////ФУНКЦИИ ПРИВЕДЕНИЯ/////////////////////////
+
+    //проверка полученного времени
+bool ClockTime::CheckTime()
+{
+    if(second < 0 || second > 59) return 0;
+    if(minute < 0 || minute > 59) return 0;
+    if(hour < 0 || hour > 23) return 0;
+
+    return 1;
+}
+
+    //перевод строки в часы, минуты и секунды
+bool ClockTime::StringToTime(char* time_str)
+{
+    hour = (time_str[0]-'0')*10 + (time_str[1]-'0');
+    minute = (time_str[3]-'0')*10 + (time_str[4]-'0');
+    second = (time_str[6]-'0')*10 + (time_str[7]-'0');
+
+    return CheckTime();
 }
 
     //перевод времени в общие секунды
-void ClockTime::TimeToFullSecond()
+bool ClockTime::TimeToFullSecond()
 {
     full_second = second + minute*60 + hour*3600;
+    return CheckTime();
 }
 
     //перевод общих секунд в часы, минуты и секунды
-void ClockTime::FullSecondToTime()
+int ClockTime::FullSecondToTime()
 {
-    long time_x = full_second;      //сохраняем данные об общих секундах
-    int hour_x = 0, minute_x = 0;   //переменные для хранения часов и минут
+    long time_x = 0;    //переменная для хранения данных об общих секундах
+    int hour_x = 0, minute_x = 0, day_x = 0;   //переменные для хранения часов, минут и дней
+    //определяем кол-во дней при вычитании дат
+    while(full_second < 0)
+    {
+        full_second += 86400; day_x--;
+    }
+    time_x = full_second;
     //определяем кол-во часов по общим секундам
     for(hour_x = 0; time_x >= 3600; hour_x++)
-    { time_x -= 3600; if(hour_x>=24) hour_x = 0; }
+    { time_x -= 3600; if(hour_x>23){hour_x = 0; day_x++;} }
     //определяем кол-во минут по оставшимся общим секундам
     for(minute_x = 0; time_x >=60; minute_x++)
     { time_x -=60; }
@@ -557,6 +572,8 @@ void ClockTime::FullSecondToTime()
     second = time_x;
     minute = minute_x;
     hour = hour_x;
+
+    return day_x;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -564,19 +581,30 @@ void ClockTime::FullSecondToTime()
     //установка времени через строку
 void ClockTime::WriteTime()
 {
-    TIME_INLINE();
-    StringToTime();
+    char* time_str = new char[9];
+    for(;;) //пока не будет соблюден формат введенного времени
+    {
+        scanf("%s",time_str);
+        if(!(StringToTime(time_str) && time_str[2]==':' &&
+             time_str[5]==':' && time_str[8]==0))
+        { std::cout << "ERROR: Print Time(hh.mm.ss)!" <<std::endl; }
+        else    //если все принято, то выходим из цикла
+        { break; }
+    }
+
     TimeToFullSecond();
+    delete [] time_str;
 }
 
     //сохранение времени после ручного ввода через методы (Set)
 void ClockTime::SaveTime()
-{
-    if(full_second <= 0)    //если меняли время,
-        TimeToFullSecond(); //то сохраняем кол-во общих
-    else                    //если меняли кол-во общих секунд
-        FullSecondToTime(); //то сохраняем время
-    TimeToString();         //и строку
+{       //если меняли время,
+    if(full_second <= 0)
+    {       //то сохраняем кол-во общих
+        if(!(TimeToFullSecond()))
+        { second = 0; minute = 0; hour = 0; full_second = 0; }
+    }
+    else FullSecondToTime(); //сохраняем время
 }
 
 
@@ -709,143 +737,128 @@ const ClockTime ClockTime::operator -(ClockTime& t)
     return ClockTime(this->SetFullSecond() - t.SetFullSecond());
 }
 
+//////////////////Перегрузка операторов ввода/вывода///////////////////////
+    //перегрузка оператора вывода
+std::ostream& operator<<(std::ostream& out, ClockTime& t)
+{
+    out << t.DisplayTime();
+    return out;
+}
 
 ////////////////////////////////////////////////////////////////////
 
 
-//////////////////////////AllDataTime///////////////////////////////
+//////////////////////////AllDateTime///////////////////////////////
 ////////////////////////////МЕТОДЫ/////////////////////////////////
 
-    //функия очистки символьного массива
-inline void AllDataTime::ALLDATA_CLEAN()
-{
-    DATA_CLEAN();            //очистка массива даты
-    TIME_CLEAN();            //очистка массива времени
-    for(int i=0;i<ALLDATA_LEN; alldata_str[i++]=0); //очистка массива полного времени
-}
-
-    //функция обработки принятой полной даты (строки)
-inline void AllDataTime::STR_INLINE()
-{
-    for(;;) //пока не будет соблюден формат введенного полного времени
-    {
-        ALLDATA_CLEAN();
-        scanf("%s",alldata_str);
-        if(alldata_str[2]!=':' || alldata_str[5]!=':' || alldata_str[8]==0 ||
-                alldata_str[11]!='.' || alldata_str[14]!='.' || alldata_str[19]!=0)
-        { std::cout << "ERROR: Print Full Time(hh:mm:ss/dd.mm.yyyy)!" <<std::endl; }
-        else    //если все принято, то выходим из цикла
-        { break; }
-    }
-}
-
-
     //пустой конструктор на полную дату (00:00:00/01.01.0000)
-AllDataTime::AllDataTime() : DataTime(), ClockTime()
-{ AllDataToString(); }
+AllDateTime::AllDateTime() : DateTime(), ClockTime()
+{}
+
+AllDateTime::AllDateTime(char* buff)
+{
+    if(!StringToAllDate(buff))
+    { second = 0; minute = 0; hour = 0; day = 1; month = 1; year = 0; }
+    AllDateToFullParam();
+}
 
     //конструктор через время и дату
-AllDataTime::AllDataTime(int h, int mi, int s, int d, int mo, int y) :
-    DataTime(d, mo, y), ClockTime(h, mi, s)
-{ AllDataToString(); }
+AllDateTime::AllDateTime(int h, int mi, int s, int d, int mo, int y) :
+    DateTime(d, mo, y), ClockTime(h, mi, s)
+{}
 
     //конструктор через дату (00:00:00/dd.mm.yyyy)
-AllDataTime::AllDataTime(int d, int mo, int y) :
-    DataTime(d, mo, y), ClockTime()
-{ AllDataToString(); }
+AllDateTime::AllDateTime(int d, int mo, int y) :
+    DateTime(d, mo, y), ClockTime()
+{}
 
     //конструктор через общие параметры (t - секунды, d - дни)
-AllDataTime::AllDataTime(long t, long d) :
-    ClockTime(t), DataTime(d)
-{ FullParamToAllData(); AllDataToString();}
+AllDateTime::AllDateTime(long t, long d) : DateTime(d)
+{ full_second = t; FullParamToAllDate(); }
 
     //вывод полной даты в формате (hh:mm:ss/dd.mm.yyyy)
-char* AllDataTime::DisplayAllData()
+char* AllDateTime::DisplayAllDate()
 {
-    AllDataToString();
-    return alldata_str;
+    static char alldate_str[20];
+    for(int i = 0; i < 20; i++) alldate_str[i] = 0;
+    strcat(alldate_str, DisplayTime());
+    strcat(alldate_str,"/");
+    strcat(alldate_str, DisplayDate());
+    alldate_str[19] = 0;
+
+    return alldate_str;
 }
 
 /////////////////////ФУНКЦИИ ПРИВЕДЕНИЯ/////////////////////////
 
-    //перевод строки в дату и время (полную дату)
-void AllDataTime::StringToAllData()
+bool AllDateTime::CheckAllDate()
 {
-    strncpy(time_str, alldata_str, 9);
-    time_str[8] = 0;
-    strcpy(data_str, &alldata_str[9]);
-    data_str[10] = 0;
+    if(!CheckDate()) return 0;
+    if(!CheckTime()) return 0;
 
-    StringToTime();
-    StringToData();
+    return 1;
 }
 
-    //перевод даты и времени в строку
-void AllDataTime::AllDataToString()
+    //перевод строки в дату и время (полную дату)
+bool AllDateTime::StringToAllDate(char* alldate_str)
 {
-    ALLDATA_CLEAN();
-    TimeToString();
-    DataToString();
-    strcat(alldata_str, time_str);
-    strcat(alldata_str,"/");
-    strcat(alldata_str, data_str);
+    char* time_str = new char[9];
+    char* date_str = new char[11];
+    strncpy(time_str, alldate_str, 9);
+    time_str[8] = 0;
+    strcpy(date_str, &alldate_str[9]);
+    date_str[10] = 0;
+
+    StringToTime(time_str);
+    StringToDate(date_str);
+
+    delete [] time_str;
+    delete [] date_str;
+
+    return CheckAllDate();
 }
 
     //перевод полной даты в обшие секунды и дни с 0 года
-void AllDataTime::AllDataToFullParam()
+bool AllDateTime::AllDateToFullParam()
 {
-    DataToFullDays();
     TimeToFullSecond();
+    DateToFullDays();
+
+    return CheckAllDate();
 }
 
     //перевод общих параметров в полную дату
-void AllDataTime::FullParamToAllData()
+void AllDateTime::FullParamToAllDate()
 {
-    FullSecondToTime();
-    FullDaysToData();
+    full_day += FullSecondToTime();
+    FullDaysToDate();
 }
-
-    //переопределение метода перевода общих секунд во время
-void AllDataTime::FullSecondToTime()
-{
-    long time_x = full_second;
-    int day_x = 0, hour_x = 0, minute_x = 0;
-    //основное изменение метода для согласования времени и даты при вычитании
-    while(time_x < 0)
-    {
-        time_x += 86400; day_x--;
-    }
-    //и сложении полных дат
-    for(hour_x = 0; time_x >= 3600; hour_x++)
-    { time_x -= 3600; if(hour_x>23){hour_x = 0; day_x++;} }
-
-    for(minute_x = 0; time_x >=60; minute_x++)
-    { time_x -=60; }
-
-    second = time_x;
-    minute = minute_x;
-    hour = hour_x;
-    full_day +=day_x;
-}
-
 
 ///////////////////////////////////////////////////////////////
 
     //установка полной даты через строку
-void AllDataTime::WriteAllData()
+void AllDateTime::WriteAllDate()
 {
-    STR_INLINE();
-    StringToAllData();
-    DataToFullDays();
-    TimeToFullSecond();
+    char* alldate_str = new char[20];
+    for(;;) //пока не будет соблюден формат введенного полного времени
+    {
+        scanf("%s",alldate_str);
+     if(!(StringToAllDate(alldate_str) && alldate_str[2]==':' && alldate_str[5]==':' &&
+          alldate_str[11]=='.' && alldate_str[14]=='.' && alldate_str[19]==0))
+        { std::cout << "ERROR: Print Full Date(hh:mm:ss/dd.mm.yyyy)!" <<std::endl; }
+        else    //если все принято, то выходим из цикла
+        { break; }
+    }
+
+    AllDateToFullParam();
+    delete [] alldate_str;
 }
 
     //сохранение полной даты после ручного ввода через методы (Set)
-void AllDataTime::SaveAllData()
+void AllDateTime::SaveAllDate()
 {
-    SaveData();
+    SaveDate();
     SaveTime();
-    AllDataToString();
 }
 
 
@@ -853,122 +866,122 @@ void AllDataTime::SaveAllData()
 //////////////Перегрузка унарных операторов//////////////////////
 
     //префиксный инкремент
-const AllDataTime& AllDataTime::operator ++()
+const AllDateTime& AllDateTime::operator ++()
 {
     this->SetFullSecond()++;
-    this->FullParamToAllData();
+    this->FullParamToAllDate();
     return *this;
 }
 
     //постфиксный инкремент
-const AllDataTime& AllDataTime::operator ++(int)
+const AllDateTime& AllDateTime::operator ++(int)
 {
-    AllDataTime* tmp = this;
+    AllDateTime* tmp = this;
     this->SetFullSecond()++;
-    this->FullParamToAllData();
+    this->FullParamToAllDate();
     return *tmp;
 }
 
     //префиксный денкремент
-const AllDataTime& AllDataTime::operator --()
+const AllDateTime& AllDateTime::operator --()
 {
     this->SetFullSecond()--;
-    this->FullParamToAllData();
+    this->FullParamToAllDate();
     return *this;
 }
 
     //постфиксный денкремент
-const AllDataTime& AllDataTime::operator --(int)
+const AllDateTime& AllDateTime::operator --(int)
 {
-    AllDataTime* tmp = this;
+    AllDateTime* tmp = this;
     this->SetFullSecond()--;
-    this->FullParamToAllData();
+    this->FullParamToAllDate();
     return *tmp;
 }
 
 
 /////////Перегрузка операторов "прибавления/вычитания"////////////
     //прибавляем секунды
-const AllDataTime& AllDataTime::operator +=(const long dt)
+const AllDateTime& AllDateTime::operator +=(const long dt)
 {
     this->SetFullSecond() += dt;
-    this->FullParamToAllData();
+    this->FullParamToAllDate();
     return *this;
 }
 
     //вычитаем секунды
-const AllDataTime& AllDataTime::operator -=(const long dt)
+const AllDateTime& AllDateTime::operator -=(const long dt)
 {
     this->SetFullSecond() -= dt;
-    this->FullParamToAllData();
+    this->FullParamToAllDate();
     return *this;
 }
 
     //складываем время
-const AllDataTime& AllDataTime::operator +=(DataTime& dt)
+const AllDateTime& AllDateTime::operator +=(DateTime& dt)
 {
     this->SetFullDays() += dt.SetFullDays();
-    this->FullParamToAllData();
+    this->FullParamToAllDate();
     return *this;
 }
 
     //вычитаем время
-const AllDataTime& AllDataTime::operator -=(DataTime& dt)
+const AllDateTime& AllDateTime::operator -=(DateTime& dt)
 {
     this->SetFullDays() -= dt.SetFullDays();
-    this->FullParamToAllData();
+    this->FullParamToAllDate();
     return *this;
 }
 
     //складываем дату
-const AllDataTime& AllDataTime::operator +=(ClockTime& dt)
+const AllDateTime& AllDateTime::operator +=(ClockTime& dt)
 {
     this->SetFullSecond() += dt.SetFullSecond();
-    this->FullParamToAllData();
+    this->FullParamToAllDate();
     return *this;
 }
 
     //вычитаем дату
-const AllDataTime& AllDataTime::operator -=(ClockTime& dt)
+const AllDateTime& AllDateTime::operator -=(ClockTime& dt)
 {
     this->SetFullSecond() -= dt.SetFullSecond();
-    this->FullParamToAllData();
+    this->FullParamToAllDate();
     return *this;
 }
 
     //складываем полную дату
-const AllDataTime& AllDataTime::operator +=(AllDataTime& dt)
+const AllDateTime& AllDateTime::operator +=(AllDateTime& dt)
 {
     this->SetFullDays() += dt.SetFullDays();
     this->SetFullSecond() += dt.SetFullSecond();
-    this->FullParamToAllData();
+    this->FullParamToAllDate();
     return *this;
 }
 
     //вычитаем полную дату
-const AllDataTime& AllDataTime::operator -=(AllDataTime& dt)
+const AllDateTime& AllDateTime::operator -=(AllDateTime& dt)
 {
     this->SetFullDays() -= dt.SetFullDays();
     this->SetFullSecond() -= dt.SetFullSecond();
-    this->FullParamToAllData();
+    this->FullParamToAllDate();
     return *this;
 }
 
 
 ///////////////Перегрузка операторов сравнения/////////////////////
 
-bool AllDataTime::operator ==(AllDataTime& dt)
+bool AllDateTime::operator ==(AllDateTime& dt)
 {
     return ((this->SetFullSecond() == dt.SetFullSecond()) &&
             (this->SetFullDays() == dt.SetFullDays())) ? true : false;
 }
 
-bool AllDataTime::operator !=(AllDataTime& dt)
+bool AllDateTime::operator !=(AllDateTime& dt)
 {
     return (*this == dt) ? false : true;
 }
 
-bool AllDataTime::operator <(AllDataTime& dt)
+bool AllDateTime::operator <(AllDateTime& dt)
 {
     if(this->SetFullDays() < dt.SetFullDays())
         return true;
@@ -979,17 +992,17 @@ bool AllDataTime::operator <(AllDataTime& dt)
     { return false; }
 }
 
-bool AllDataTime::operator <=(AllDataTime& dt)
+bool AllDateTime::operator <=(AllDateTime& dt)
 {
     return ((*this < dt) || (*this == dt)) ? true : false;
 }
 
-bool AllDataTime::operator >(AllDataTime& dt)
+bool AllDateTime::operator >(AllDateTime& dt)
 {
     return ((*this == dt) || (*this < dt)) ? false : true;
 }
 
-bool AllDataTime::operator >=(AllDataTime& dt)
+bool AllDateTime::operator >=(AllDateTime& dt)
 {
     return ((*this > dt) || (*this == dt)) ? true : false;
 }
@@ -998,55 +1011,62 @@ bool AllDataTime::operator >=(AllDataTime& dt)
 /////////////Перегрузка операторов сложения/вычитания///////////////
 
     //перегрузка оператора сложения полной даты и секунд
-const AllDataTime AllDataTime::operator +(const long dt)
+const AllDateTime AllDateTime::operator +(const long dt)
 {
-    return AllDataTime(this->SetFullSecond() + dt, this->SetFullDays());
+    return AllDateTime(this->SetFullSecond() + dt, this->SetFullDays());
 }
 
     //перегрузка оператора вычитания полной даты и секунд
-const AllDataTime AllDataTime::operator -(const long dt)
+const AllDateTime AllDateTime::operator -(const long dt)
 {
-    return AllDataTime(this->SetFullSecond() - dt, this->SetFullDays());
+    return AllDateTime(this->SetFullSecond() - dt, this->SetFullDays());
 }
 
     //перегрузка оператора сложения полной даты и даты
-const AllDataTime AllDataTime::operator +(DataTime& dt)
+const AllDateTime AllDateTime::operator +(DateTime& dt)
 {
-    return AllDataTime(this->SetFullSecond(), this->SetFullDays() + dt.SetFullDays());
+    return AllDateTime(this->SetFullSecond(), this->SetFullDays() + dt.SetFullDays());
 }
 
     //перегрузка оператора вычитания полной даты и даты
-const AllDataTime AllDataTime::operator -(DataTime& dt)
+const AllDateTime AllDateTime::operator -(DateTime& dt)
 {
-    return AllDataTime(this->SetFullSecond(), this->SetFullDays() - dt.SetFullDays());
+    return AllDateTime(this->SetFullSecond(), this->SetFullDays() - dt.SetFullDays());
 }
 
     //перегрузка оператора сложения полной даты и времени
-const AllDataTime AllDataTime::operator +(ClockTime& dt)
+const AllDateTime AllDateTime::operator +(ClockTime& dt)
 {
-    return AllDataTime(this->SetFullSecond() + dt.SetFullSecond(), this->SetFullDays());
+    return AllDateTime(this->SetFullSecond() + dt.SetFullSecond(), this->SetFullDays());
 }
 
     //перегрузка оператора вычитания полной даты и времени
-const AllDataTime AllDataTime::operator -(ClockTime& dt)
+const AllDateTime AllDateTime::operator -(ClockTime& dt)
 {
-    return AllDataTime(this->SetFullSecond() - dt.SetFullSecond(), this->SetFullDays());
+    return AllDateTime(this->SetFullSecond() - dt.SetFullSecond(), this->SetFullDays());
 }
 
     //перегрузка оператора сложения двух полных дат
-const AllDataTime AllDataTime::operator +(AllDataTime& dt)
+const AllDateTime AllDateTime::operator +(AllDateTime& dt)
 {
-    return AllDataTime(this->SetFullSecond() + dt.SetFullSecond(),
+    return AllDateTime(this->SetFullSecond() + dt.SetFullSecond(),
                        this->SetFullDays() + dt.SetFullDays());
 }
 
     //перегрузка оператора вычитания двух полных дат
-const AllDataTime AllDataTime::operator -(AllDataTime& dt)
+const AllDateTime AllDateTime::operator -(AllDateTime& dt)
 {
-    return AllDataTime(this->SetFullSecond() - dt.SetFullSecond(),
+    return AllDateTime(this->SetFullSecond() - dt.SetFullSecond(),
                        this->SetFullDays() - dt.SetFullDays());
 }
 
+//////////////////Перегрузка операторов ввода/вывода///////////////////////
+    //перегрузка оператора вывода
+std::ostream& operator<<(std::ostream& out, AllDateTime& dt)
+{
+    out << dt.DisplayAllDate();
+    return out;
+}
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
