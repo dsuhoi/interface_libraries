@@ -25,7 +25,7 @@ protected:
     bool DateToFullDays();       //перевод даты в кол-во дней от 0 года
     void FullDaysToDate();       //перевод кол-ва дней от 0 года в дни, месяцы и годы
 public:
-    DateTime();             //пустой конструктор на дату (01.01.0000)
+    DateTime();             //пустой конструктор на дату (00.00.0000)
     DateTime(char*);        //конструктор через строку
     DateTime(long);         //конструктор через кол-во дней от 0 года
     DateTime(int d,int m,int y);  //конструктор через ручную утсановку даты (день, месяц, год)
@@ -38,6 +38,8 @@ public:
     void WriteDate();       //установка даты через строку
     void SaveDate();        //сохранение даты после ручного ввода через методы (Set)
     ///////////////////////ОПЕРАТОРЫ/////////////////////////////////
+    //перегрузка операторов присваивания
+    const DateTime& operator =(char*);   //присвоение даты через строку
     //перегрузка унарных операторов
     const DateTime& operator ++();       //префиксный инкремент
     const DateTime& operator ++(int);    //постфиксный инкремент
@@ -62,7 +64,7 @@ public:
     const DateTime operator -(DateTime&);    //перегрузка оператора вычитания двух дат
     //перегрузка операторов ввода/вывода
     friend std::ostream& operator <<(std::ostream&, DateTime&); //перегрузка оператора вывода
-    friend void operator >>(std::istream&, DateTime&);      //перегруза оператора ввода
+    friend std::istream& operator >>(std::istream&, DateTime&); //перегруза оператора ввода
 };
 
 ////////////////ClockTime///////////////////////
@@ -94,6 +96,8 @@ public:
     void WriteTime();       //установка времени через строку
     void SaveTime();        //сохранение времени после ручного ввода через методы (Set)
     ///////////////////////ОПЕРАТОРЫ/////////////////////////////////
+    //перегрузка операторов присваивания
+    const ClockTime& operator =(char*);   //присвоение времени через строку
     //перегрузка унарных операторов
     const ClockTime& operator ++();       //префиксный инкремент
     const ClockTime& operator ++(int);    //постфиксный инкремент
@@ -118,7 +122,7 @@ public:
     const ClockTime operator -(ClockTime&);    //перегрузка оператора вычитания двух времен
     //перегрузка операции ввода/вывода
     friend std::ostream& operator <<(std::ostream, ClockTime&); //перегрузка оператора вывода
-    friend void operator >>(std::istream&, ClockTime&);     //перегрузка оператора ввода
+    friend std::istream& operator >>(std::istream&, ClockTime&);//перегрузка оператора ввода
 };
 
 ///////////////AllDateTime//////////////////////
@@ -131,16 +135,22 @@ protected:
     bool AllDateToFullParam();          //перевод полной даты в обшие секунды и дни с 0 года
     void FullParamToAllDate();          //перевод общих параметров в полную дату
 public:
-    AllDateTime();          //пустой конструктор на полную дату (00:00:00/01.01.0000)
+    AllDateTime();          //пустой конструктор на полную дату (00:00:00/00.00.0000)
     AllDateTime(char*);     //конструктор через строку
     AllDateTime(int h, int mi, int s, int d, int mo, int y);    //конструктор через время и дату
     AllDateTime(int d, int mo, int y);      //конструктор через дату (00:00:00/dd.mm.yyyy)
     AllDateTime(long t, long d);        //конструктор через общие параметры (t - секунды, d - дни)
     ////////////////////////МЕТОДЫ////////////////////////////////
+    const DateTime GetDateTime();   //возвращение даты в формате объекта DateTime
+    const ClockTime GetClockTime(); //возвращение времени в формате объекта ClockTime
     char* DisplayAllDate();      //вывод полной даты в формате (hh:mm:ss/dd.mm.yyyy)
     void WriteAllDate();         //установка полной даты через строку
     void SaveAllDate();          //сохранение полной даты после ручного ввода через методы (Set)
     ///////////////////////ОПЕРАТОРЫ/////////////////////////////////
+    //перегрузка операторов присваивания
+    const AllDateTime& operator =(ClockTime&);  //присвоение времени
+    const AllDateTime& operator =(DateTime&);   //присвоение даты
+    const AllDateTime& operator =(char*);       //присвоение полной даты через строку
     //перегрузка унарных операторов
     const AllDateTime& operator ++();       //префиксный инкремент
     const AllDateTime& operator ++(int);    //постфиксный инкремент
@@ -173,7 +183,7 @@ public:
     const AllDateTime operator -(AllDateTime&);   //перегрузка оператора вычитания двух полных дат
     //перегрузка операторов ввода/вывода
     friend std::ostream& operator <<(std::ostream&, AllDateTime&);  //перегрузка оператора вывода
-    friend void operator >>(std::istream&, AllDateTime&);       //перегрузка оператора ввода
+    friend std::istream& operator >>(std::istream&, AllDateTime&);  //перегрузка оператора ввода
 };
 
 

@@ -7,15 +7,18 @@
 //////////////////////DateTime//////////////////////////////
 ///////////////////////МЕТОДЫ//////////////////////////////
 
-    //пустой конструктор на дату (01.01.0000)
+    //пустой конструктор на дату (00.00.0000)
 DateTime::DateTime()
 {
-    day = 1; month = 1; year = 0; full_day = 1; //установка по умолчанию всех данных
+    day = 0; month = 0; year = 0; full_day = 0; //установка по умолчанию всех данных
 }
 
     //конструктор через кол-во дней от 0 года
 DateTime::DateTime(long l) : full_day(l)
-{ FullDaysToDate(); }
+{
+    if(full_day < 0) full_day += 365;
+    FullDaysToDate();
+}
 
     //конструктор через ручную утсановку даты (день, месяц, год)
 DateTime::DateTime(int d, int m, int y) : day(d), month(m), year(y)
@@ -77,11 +80,11 @@ char* DateTime::DisplayDate()
     date_str[9] = (year - (year/10)*10) + '0';
     }
     date_str[10] = 0;
+
     return date_str;
 }
 
 /////////////////////ФУНКЦИИ ПРИВЕДЕНИЯ///////////////////////////
-
     //проверка полученной даты
 bool DateTime::CheckDate()
 {
@@ -124,6 +127,9 @@ bool DateTime::DateToFullDays()
 
     switch (month)
     {               //определение кол-ва дней через месяц
+    case 0:
+        full_day = 0; day = 0;
+        break;
     case 1:
         full_day += day;
         break;
@@ -184,11 +190,11 @@ bool DateTime::DateToFullDays()
     //перевод кол-ва дней от 0 года в дни, месяцы и годы
 void DateTime::FullDaysToDate()
 {
-    long data_x = full_day;     //создаем переменную для временного хранения данных
+    long data_x = full_day;         //создаем переменную для временного хранения данных
     int year_x = 0, month_x = 0;    //переменные для хранения года и месяца
     bool vesokos_count = 0;         //счетчик високосного года
 
-    //определяем год
+        //определяем год
     for(year_x = 0; data_x > 365; year_x++)
     {
     if((((!(year_x%4))&&(year_x%100))||(!(year_x%400)))&&year_x) //если идет високосный год...
@@ -260,15 +266,20 @@ void DateTime::FullDaysToDate()
     {
         month_x = 1;
     }
+    else if(data_x == 0)
+    {
+        month_x = 0; year_x = 0;
+    }
     else
-    { std::cout << "ERROR DATA!"<<std::endl; }
+    { std::cout << "ERROR: DATA!"<<std::endl; }
 
     day = data_x;   //сохраняем результаты вычислений
     month = month_x;
     year = year_x;
 }
 
-//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////  
+
     //установка даты через ввод
 void DateTime::WriteDate()
 {
@@ -296,8 +307,15 @@ void DateTime::SaveDate()
 }
 
 ///////////////////////ОПЕРАТОРЫ/////////////////////////////////
-//////////////Перегрузка унарных операторов//////////////////////
+/////////////Перегрузка операторов присваивания//////////////////
+    //присвоение даты через строку
+const DateTime& DateTime::operator =(char* buff)
+{
+    *this = DateTime(buff);
+    return *this;
+}
 
+//////////////Перегрузка унарных операторов//////////////////////
     //префиксный инкремент
 const DateTime& DateTime::operator ++()
 {
@@ -333,7 +351,6 @@ const DateTime& DateTime::operator --(int)
 }
 
 /////////Перегрузка операторов "прибавления/вычитания"////////////
-
     //прибавляем дни
 const DateTime& DateTime::operator +=(const long d)
 {
@@ -399,7 +416,6 @@ bool DateTime::operator >=(DateTime& d)
 }
 
 /////////////Перегрузка операторов сложения/вычитания///////////////
-
     //перегрузка оператора сложения даты и дней
 const DateTime DateTime::operator +(const long d)
 {
@@ -431,7 +447,8 @@ std::ostream& operator <<(std::ostream& out, DateTime& d)
     out << d.DisplayDate();
     return out;
 }
-/*
+
+    //перегрузка оператора ввода
 std::istream& operator >>(std::istream& in, DateTime& d)
 {
     char* buff = new char[11];
@@ -442,9 +459,9 @@ std::istream& operator >>(std::istream& in, DateTime& d)
     delete [] buff;
     return in;
 }
-*/
 
 //////////////////////////////////////////////////////////////////////
+
 
 
 ////////////////////////ClockTime///////////////////////////////////
@@ -519,11 +536,11 @@ char* ClockTime::DisplayTime()
     time_str[6] = second/10 + '0';
     time_str[7] = (second%10) + '0';
     time_str[8] = 0;
+
     return time_str;
 }
 
 /////////////////////ФУНКЦИИ ПРИВЕДЕНИЯ/////////////////////////
-
     //проверка полученного времени
 bool ClockTime::CheckTime()
 {
@@ -609,8 +626,15 @@ void ClockTime::SaveTime()
 
 
 ///////////////////////ОПЕРАТОРЫ/////////////////////////////////
-//////////////Перегрузка унарных операторов//////////////////////
+/////////////Перегрузка операторов присваивания//////////////////
+    //присвоение времени через строку
+const ClockTime& ClockTime::operator =(char* buff)
+{
+    *this = ClockTime(buff);
+    return *this;
+}
 
+//////////////Перегрузка унарных операторов//////////////////////
     //префиксный инкремент
 const ClockTime& ClockTime::operator ++()
 {
@@ -646,7 +670,6 @@ const ClockTime& ClockTime::operator --(int)
 }
 
 /////////Перегрузка операторов "прибавления/вычитания"////////////
-
     //прибавляем секунды
 const ClockTime& ClockTime::operator +=(const long t)
 {
@@ -712,7 +735,6 @@ bool ClockTime::operator >=(ClockTime& t)
 }
 
 /////////////Перегрузка операторов сложения/вычитания///////////////
-
     //перегрузка оператора сложения времени и секунд
 const ClockTime ClockTime::operator +(const long t)
 {
@@ -745,7 +767,20 @@ std::ostream& operator<<(std::ostream& out, ClockTime& t)
     return out;
 }
 
+    //перегрузка оператора ввода
+std::istream& operator >>(std::istream& in, ClockTime& t)
+{
+    char* buff = new char[9];
+    in >> buff;
+    t = ClockTime(buff);
+    if(!in)
+    { t = ClockTime(); }
+    delete [] buff;
+    return in;
+}
+
 ////////////////////////////////////////////////////////////////////
+
 
 
 //////////////////////////AllDateTime///////////////////////////////
@@ -755,10 +790,10 @@ std::ostream& operator<<(std::ostream& out, ClockTime& t)
 AllDateTime::AllDateTime() : DateTime(), ClockTime()
 {}
 
+    //конструктор через строку
 AllDateTime::AllDateTime(char* buff)
 {
-    if(!StringToAllDate(buff))
-    { second = 0; minute = 0; hour = 0; day = 1; month = 1; year = 0; }
+    if(!StringToAllDate(buff)) *this = AllDateTime();
     AllDateToFullParam();
 }
 
@@ -790,7 +825,7 @@ char* AllDateTime::DisplayAllDate()
 }
 
 /////////////////////ФУНКЦИИ ПРИВЕДЕНИЯ/////////////////////////
-
+    //проверка полученной полной даты
 bool AllDateTime::CheckAllDate()
 {
     if(!CheckDate()) return 0;
@@ -804,13 +839,29 @@ bool AllDateTime::StringToAllDate(char* alldate_str)
 {
     char* time_str = new char[9];
     char* date_str = new char[11];
-    strncpy(time_str, alldate_str, 9);
-    time_str[8] = 0;
-    strcpy(date_str, &alldate_str[9]);
-    date_str[10] = 0;
 
-    StringToTime(time_str);
-    StringToDate(date_str);
+    if(alldate_str[2] == ':' && alldate_str[5] == ':' && alldate_str[8] == 0)
+    {
+        strncpy(time_str, alldate_str, 9);
+        time_str[8] = 0;
+        StringToTime(time_str);
+        return CheckTime();
+    }
+    else if(alldate_str[2] == '.' && alldate_str[5] == '.' && alldate_str[10] == 0)
+    {
+        strncpy(date_str, alldate_str, 11);
+        date_str[10] = 0;
+        StringToDate(date_str);
+    }
+    else
+    {
+        strncpy(time_str, alldate_str, 9);
+        time_str[8] = 0;
+        strcpy(date_str, &alldate_str[9]);
+        date_str[10] = 0;
+        StringToTime(time_str);
+        StringToDate(date_str);
+    }
 
     delete [] time_str;
     delete [] date_str;
@@ -863,8 +914,43 @@ void AllDateTime::SaveAllDate()
 
 
 ///////////////////////ОПЕРАТОРЫ/////////////////////////////////
-//////////////Перегрузка унарных операторов//////////////////////
+/////////////Перегрузка операторов присваивания//////////////////
+    //возвращение даты в формате объекта DateTime
+const DateTime AllDateTime::GetDateTime()
+{
+    return DateTime(full_day);
+}
 
+    //возвращение времени в формате объекта ClockTime
+const ClockTime AllDateTime::GetClockTime()
+{
+    return ClockTime(full_second);
+}
+
+    //присвоение времени
+const AllDateTime& AllDateTime::operator =(ClockTime& t)
+{
+    this->SetFullSecond() = t.SetFullSecond();
+    this->FullSecondToTime();
+    return *this;
+}
+
+    //присвоение даты
+const AllDateTime& AllDateTime::operator =(DateTime& d)
+{
+    this->SetFullDays() = d.SetFullDays();
+    this->FullDaysToDate();
+    return *this;
+}
+
+    //присвоение полной даты через строку
+const AllDateTime& AllDateTime::operator =(char* buff)
+{
+    *this = AllDateTime(buff);
+    return *this;
+}
+
+//////////////Перегрузка унарных операторов//////////////////////
     //префиксный инкремент
 const AllDateTime& AllDateTime::operator ++()
 {
@@ -1009,7 +1095,6 @@ bool AllDateTime::operator >=(AllDateTime& dt)
 
 
 /////////////Перегрузка операторов сложения/вычитания///////////////
-
     //перегрузка оператора сложения полной даты и секунд
 const AllDateTime AllDateTime::operator +(const long dt)
 {
@@ -1068,5 +1153,19 @@ std::ostream& operator<<(std::ostream& out, AllDateTime& dt)
     return out;
 }
 
+    //перегрузка оператора ввода
+std::istream& operator >>(std::istream& in, AllDateTime& dt)
+{
+    char* buff = new char[20];
+    in >> buff;
+    dt = AllDateTime(buff);
+    if(!in)
+    { dt = AllDateTime(); }
+    delete [] buff;
+    return in;
+}
+
+
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
+
