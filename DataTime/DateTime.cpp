@@ -61,7 +61,9 @@ long& DateTime::SetFullDays()
 char* DateTime::DisplayDate()
 {
     static char date_str[11];
-    for(int i = 0; i < 11; i++) date_str[i] = 0;
+
+    for(int i = 0; i < 11; i++) date_str[i] = 0; //очистка строки
+
     date_str[2]=date_str[5]='.';
     date_str[0] = day/10 + '0';
     date_str[1] = (day%10) + '0';
@@ -88,13 +90,13 @@ char* DateTime::DisplayDate()
     //проверка полученной даты
 bool DateTime::CheckDate()
 {
-    if(day < 1) return 0;
-    if(year < 0 || year > 9999) return 0;
-
+    if(day < 1) return 0;   //проверка дней
+    if(year < 0 || year > 9999) return 0;   //проверка лет
+            //проверка месяцев
         if (month == 4 || month == 6 || month == 9 || month == 11)
         { if (day > 30) return 0; }
         else if (month == 2)
-        {
+        {       //проверка високосного года
             if(((!(year%4)&&year%100) || !(year%400))&&year)
             { if(day > 29) return 0; }
             else
@@ -115,7 +117,7 @@ bool DateTime::StringToDate(char* date_str)
     month = (date_str[3]-'0')*10 + (date_str[4]-'0');
     year = (date_str[6]-'0')*1000 + (date_str[7]-'0')*100 + (date_str[8]-'0')*10 + (date_str[9]-'0');
 
-    return CheckDate();
+    return CheckDate(); //проверка даты
 }
 
     //перевод даты в кол-во дней от 0 года
@@ -181,7 +183,7 @@ bool DateTime::DateToFullDays()
 
     full_day +=365*(year - visokos_num) + 366*visokos_num;  //прибавление дней по годам
 
-    return CheckDate();
+    return CheckDate(); //проверка даты
 }
 
     //перевод кол-ва дней от 0 года в дни, месяцы и годы
@@ -277,6 +279,7 @@ void DateTime::FullDaysToDate()
 void DateTime::WriteDate()
 {
     char* date_str = new char[11];
+
     for(;;) //пока не будет соблюден формат введенной даты
     {
         scanf("%s",date_str);
@@ -285,6 +288,7 @@ void DateTime::WriteDate()
         else    //если все принято, то выходим из цикла
         { break; }
     }
+
     DateToFullDays();   //определяем кол-во дней с 0 года
     delete [] date_str;
 }
@@ -445,10 +449,12 @@ std::ostream& operator <<(std::ostream& out, DateTime& d)
 std::istream& operator >>(std::istream& in, DateTime& d)
 {
     char* buff = new char[11];
+
     in >> buff;
     d = DateTime(buff);
     if(!in)
     { d = DateTime(); }
+
     delete [] buff;
     return in;
 }
@@ -520,7 +526,9 @@ long& ClockTime::SetFullSecond()
 char* ClockTime::DisplayTime()
 {
     static char time_str[9];
-    for(int i = 0; i < 9; i++) time_str[i] = 0;
+
+    for(int i = 0; i < 9; i++) time_str[i] = 0; //очистка строки
+
     time_str[2]=time_str[5]=':';
     time_str[0] = hour/10 + '0';
     time_str[1] = (hour%10) + '0';
@@ -536,7 +544,7 @@ char* ClockTime::DisplayTime()
 /////////////////////ФУНКЦИИ ПРИВЕДЕНИЯ/////////////////////////
     //проверка полученного времени
 bool ClockTime::CheckTime()
-{
+{       //проверяем секунды, минуты и часы
     if(second < 0 || second > 59) return 0;
     if(minute < 0 || minute > 59) return 0;
     if(hour < 0 || hour > 23) return 0;
@@ -551,14 +559,14 @@ bool ClockTime::StringToTime(char* time_str)
     minute = (time_str[3]-'0')*10 + (time_str[4]-'0');
     second = (time_str[6]-'0')*10 + (time_str[7]-'0');
 
-    return CheckTime();
+    return CheckTime(); //проверка времени
 }
 
     //перевод времени в общие секунды
 bool ClockTime::TimeToFullSecond()
 {
     full_second = second + minute*60 + hour*3600;
-    return CheckTime();
+    return CheckTime(); //проверка времени
 }
 
     //перевод общих секунд в часы, минуты и секунды
@@ -566,12 +574,14 @@ int ClockTime::FullSecondToTime()
 {
     long time_x = 0;    //переменная для хранения данных об общих секундах
     int hour_x = 0, minute_x = 0, day_x = 0;   //переменные для хранения часов, минут и дней
+
     //определяем кол-во дней при вычитании дат
     while(full_second < 0)
     {
         full_second += 86400; day_x--;
     }
     time_x = full_second;
+
     //определяем кол-во часов по общим секундам
     for(hour_x = 0; time_x >= 3600; hour_x++)
     { time_x -= 3600; if(hour_x>23){hour_x = 0; day_x++;} }
@@ -592,6 +602,7 @@ int ClockTime::FullSecondToTime()
 void ClockTime::WriteTime()
 {
     char* time_str = new char[9];
+
     for(;;) //пока не будет соблюден формат введенного времени
     {
         scanf("%s",time_str);
@@ -768,6 +779,7 @@ std::istream& operator >>(std::istream& in, ClockTime& t)
     t = ClockTime(buff);
     if(!in)
     { t = ClockTime(); }
+
     delete [] buff;
     return in;
 }
@@ -808,7 +820,9 @@ AllDateTime::AllDateTime(long t, long d) : DateTime(d)
 char* AllDateTime::DisplayAllDate()
 {
     static char alldate_str[20];
-    for(int i = 0; i < 20; i++) alldate_str[i] = 0;
+
+    for(int i = 0; i < 20; i++) alldate_str[i] = 0; //очистка строки
+
     strcat(alldate_str, DisplayTime());
     strcat(alldate_str,"/");
     strcat(alldate_str, DisplayDate());
@@ -820,7 +834,7 @@ char* AllDateTime::DisplayAllDate()
 /////////////////////ФУНКЦИИ ПРИВЕДЕНИЯ/////////////////////////
     //проверка полученной полной даты
 bool AllDateTime::CheckAllDate()
-{
+{       //проверка даты и времени
     if(!CheckDate()) return 0;
     if(!CheckTime()) return 0;
 
@@ -833,21 +847,22 @@ bool AllDateTime::StringToAllDate(char* alldate_str)
     char* time_str = new char[9];
     char* date_str = new char[11];
 
+        //производим проверку на строку с датой, временем или полной датой
     if(alldate_str[2] == ':' && alldate_str[5] == ':' && alldate_str[8] == 0)
-    {
+    {       //копируем строку и преобразуем ее во время
         strncpy(time_str, alldate_str, 9);
         time_str[8] = 0;
         StringToTime(time_str);
-        return CheckTime();
+        return CheckTime(); //проверка времени
     }
     else if(alldate_str[2] == '.' && alldate_str[5] == '.' && alldate_str[10] == 0)
-    {
+    {       //копируем строку и преобразуем в дату
         strncpy(date_str, alldate_str, 11);
         date_str[10] = 0;
         StringToDate(date_str);
     }
     else
-    {
+    {       //преобразуем строку в полную дату и разбираемся...
         strncpy(time_str, alldate_str, 9);
         time_str[8] = 0;
         strcpy(date_str, &alldate_str[9]);
@@ -859,7 +874,7 @@ bool AllDateTime::StringToAllDate(char* alldate_str)
     delete [] time_str;
     delete [] date_str;
 
-    return CheckAllDate();
+    return CheckAllDate();  //проверка полной даты
 }
 
     //перевод полной даты в обшие секунды и дни с 0 года
@@ -868,7 +883,7 @@ bool AllDateTime::AllDateToFullParam()
     TimeToFullSecond();
     DateToFullDays();
 
-    return CheckAllDate();
+    return CheckAllDate();  //проверка полной даты
 }
 
     //перевод общих параметров в полную дату
@@ -884,7 +899,8 @@ void AllDateTime::FullParamToAllDate()
 void AllDateTime::WriteAllDate()
 {
     char* alldate_str = new char[20];
-    for(;;) //пока не будет соблюден формат введенного полного времени
+
+    for(;;) //пока не будет соблюден формат введенной полной даты
     {
         scanf("%s",alldate_str);
      if(!(StringToAllDate(alldate_str) && alldate_str[2]==':' && alldate_str[5]==':' &&
@@ -1161,4 +1177,3 @@ std::istream& operator >>(std::istream& in, AllDateTime& dt)
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
-
