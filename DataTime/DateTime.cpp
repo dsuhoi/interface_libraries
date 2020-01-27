@@ -127,9 +127,6 @@ bool DateTime::DateToFullDays()
 
     switch (month)
     {               //определение кол-ва дней через месяц
-    case 0:
-        full_day = 0; day = 0;
-        break;
     case 1:
         full_day += day;
         break;
@@ -176,7 +173,7 @@ bool DateTime::DateToFullDays()
         if(visokos_count) full_day += 335 + day;
             else full_day += 334 + day;
         break;
-    default: std::cout << "ERROR: DATE!" << std::endl; //если как-то ввели неправильный месяц...
+    default: full_day = 0; day = 0; //если как-то ввели неправильный месяц...
         break;
     }
 
@@ -266,12 +263,8 @@ void DateTime::FullDaysToDate()
     {
         month_x = 1;
     }
-    else if(data_x == 0)
-    {
-        month_x = 0; year_x = 0;
-    }
     else
-    { std::cout << "ERROR: DATA!"<<std::endl; }
+    { month_x = 0; year_x = 0; }
 
     day = data_x;   //сохраняем результаты вычислений
     month = month_x;
