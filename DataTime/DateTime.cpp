@@ -1,4 +1,4 @@
-﻿//Created by DSuhoi (2020).//
+//Created by DSuhoi (2020).//
 #include <iostream>
 #include <cstring>
 #include "DateTime.h"
@@ -273,7 +273,7 @@ void DateTime::FullDaysToDate()
     year = year_x;
 }
 
-//////////////////////////////////////////////////////////////////  
+//////////////////////////////////////////////////////////////////
 
     //установка даты через ввод
 void DateTime::WriteDate()
