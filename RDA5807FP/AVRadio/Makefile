@@ -39,24 +39,24 @@ help:
 	@echo 'size       Show size ".hex" file.'
 
 
-object: main lcd rda i2c radio
+object: $(OBJ)
 	$(CC) $(CFLAGS) -o $(COMP).o $(OBJ)
 
 #################################################
 
-main: $(HEAD)
+main.o: $(HEAD)
 	$(CC) $(CFLAGS) -c main.c
 
-lcd: $(HEAD)
+LCD.o: $(HEAD)
 	$(CC) $(CFLAGS) -c LCD/LCD.c
 
-rda: $(HEAD)
+RDA5807FP.o: $(HEAD)
 	$(CC) $(CFLAGS) -c ../RDA5807FP.c
 
-i2c: $(HEAD)
+i2c.o: $(HEAD)
 	$(CC) $(CFLAGS) -c ../../I2C/i2c.c
 	
-radio: $(HEAD)
+RADIO.o: $(HEAD)
 	$(CC) $(CFLAGS) -c Radio/RADIO.c
 
 ################################################
