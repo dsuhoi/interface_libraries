@@ -1,4 +1,4 @@
-﻿/*##########################################
+/*##########################################
   ##Library for working with I2C.(c)DSuhoi##
   ##########################################*/
 
@@ -10,8 +10,8 @@
 #define ACK 0	
 #define NACK 1
 
-#define SDA 1
-#define SCL 0
+#define SDA 4
+#define SCL 5
 #define I2C_PORT PORTC
 #define I2C_PIN PINC
 #define I2C_DDR DDRC
