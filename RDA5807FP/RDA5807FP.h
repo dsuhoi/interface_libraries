@@ -122,14 +122,14 @@
  * or 4-11 => E when ABCD_E = 1
  */
 
-/////////////////////////////////////////////
-uint8_t fm_buf[9];//Radio buffer
+
+uint8_t fm_buf[9];	// Radio buffer
 ///////////////Function/////////////////////////////
-void I2C_write(void);//write bytes
-void FM_init(void);//initializations RDA5807
-void SetFreq(uint16_t);//write frequency
-void Set_volume(uint8_t);//write volume
-void Auto_seek(uint8_t);//setting up auto search ( 1 - up, 0 - down)
+void I2C_write(void);		// Write bytes
+void FM_init(void);			// Initializations RDA5807
+void SetFreq(uint16_t);		// Write frequency
+void Set_volume(uint8_t);	// Write volume
+void Auto_seek(uint8_t);	// Setting up auto search ( 1 - up, 0 - down)
 
 
 #endif

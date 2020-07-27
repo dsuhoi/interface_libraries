@@ -6,27 +6,28 @@
 #ifndef __UART_H__
 #define __UART_H__
 
-#define ISR_COUNT 0     //parameter of using UART handler and buffer(0-off, 1-on)
+/*########################Constants####################################*/
+#define ISR_COUNT 0     // Parameter of using UART handler and buffer(0-off, 1-on)
 
-#define F_CPU 8000000UL	//frequency of the microcontroller
+#define F_CPU 8000000UL	// Frequency of the microcontroller
 #define ELEMENTS 512    //UART buffer size
-//erasing the UART buffer
+// Erasing the UART buffer
 #define BUF_CLEAR {for(uint16_t i=0; i<ELEMENTS; buffer_uart[i++]=0); index_buf=0;}
 
-//the necessary microcontrollers can be added by yourself
+// The necessary microcontrollers can be added by yourself
 #if (__AVR_ATmega328P__) || (__AVR_ATmega328__) || (__AVR_ATmega644P__) || (__AVR_ATmega644__) || (__AVR_ATmega644A__)
 #define MKREG
 #endif
 
 /*######################################Functions################################################*/
-void uart_init(unsigned long baud); //initialization uart; baud - speed(4800,9600,19200...)
-void uart_tr(uint8_t); //byte transfering
-uint8_t uart_receive_byte(void); //byte recieving
-void uart_send(char*); //send string
-void uart_sendln(char*); //send string with "\r\n"
+void uart_init(unsigned long baud); 	// Initialization uart; baud - speed(4800,9600,19200...)
+void uart_tr(uint8_t); 					// Byte transfering
+uint8_t uart_receive_byte(void); 		// Byte recieving
+void uart_send(char*); 					// Send string
+void uart_sendln(char*); 				// Send string with "\r\n"
 
 #if ISR_COUNT
-void uart_receive(void); //function is inserted into the interrupt with the vector (USART0_RX_vect)
+void uart_receive(void); 	// Function is inserted into the interrupt with the vector (USART0_RX_vect)
 #endif
 
 #endif
