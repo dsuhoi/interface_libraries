@@ -5,6 +5,7 @@
 #ifndef _SPI_H_
 #define _SPI_H_
 
+/*########################Constants####################################*/
 #define F_CPU 8000000UL //frequency of the microcontroller
 
 #define MOSI 3

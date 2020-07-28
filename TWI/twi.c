@@ -37,7 +37,7 @@ uint8_t twi_read_byte(uint8_t final_byte)
 	if(!final_byte){
 		TWCR = _BV(TWINT) | _BV(TWEN) | _BV(TWEA);
 	}
-	else{
+	else{	// If this is the last received byte, then we end the reception
 		TWCR = _BV(TWINT) | _BV(TWEN);
 	}
 

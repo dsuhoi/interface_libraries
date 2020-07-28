@@ -38,7 +38,7 @@ void i2c_start(void)
 uint8_t i2c_write_byte(uint8_t byte)
 {
 	uint8_t ask = ACK;
-	
+	// Bitwise sending a byte
 	for(uint8_t i = 0;i < 8;i++){
 		if(byte & 0x80){ 
 			I2C_DDR &=~_BV(SDA);
@@ -76,8 +76,8 @@ uint8_t i2c_read_byte(uint8_t final_byte)
 {
 	I2C_DDR &=~_BV(SDA);
 	uint8_t byte = 0;
+	// Bitwise reading
 	for(uint8_t i = 0;i < 8;i++){
-		
 		byte<<=1;
 		I2C_DDR &=~_BV(SCL);
 		i2c_delay;
@@ -88,7 +88,7 @@ uint8_t i2c_read_byte(uint8_t final_byte)
 		I2C_DDR |=_BV(SCL);
 		i2c_delay;
 	}
-
+	// If this is the last received byte, then we end the reception
 	if(final_byte == ACK){ 
 		I2C_DDR |=_BV(SDA);
 	}

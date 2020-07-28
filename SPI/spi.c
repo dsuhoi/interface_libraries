@@ -5,6 +5,7 @@
 // Start signal
 void spi_start(void)
 {
+	// Extra delays can be added to improve data transmission reliability
 	//spi_delay;
 	SPI_PORT &=~(_BV(CS) | _BV(SCK));
 	spi_delay;
