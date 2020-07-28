@@ -21,10 +21,10 @@
 
 /*######################################Functions################################################*/
 void uart_init(unsigned long baud); 	// Initialization uart; baud - speed(4800,9600,19200...)
-void uart_tr(uint8_t); 					// Byte transfering
-uint8_t uart_receive_byte(void); 		// Byte recieving
-void uart_send(char*); 					// Send string
-void uart_sendln(char*); 				// Send string with "\r\n"
+void uart_tr(uint8_t); 			// Byte transfering
+uint8_t uart_receive_byte(void); 	// Byte recieving
+void uart_send(char*); 			// Send string
+void uart_sendln(char*); 		// Send string with "\r\n"
 
 #if ISR_COUNT
 void uart_receive(void); 	// Function is inserted into the interrupt with the vector (USART0_RX_vect)
