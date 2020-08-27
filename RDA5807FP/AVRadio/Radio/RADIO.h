@@ -27,17 +27,17 @@
 #define RADIO_32 879
 
 // Кнопки
-#define UP (1<<0)
+#define UP  (1<<0)
 #define DOWN (1<<1)
 #define MODE (1<<2)
 #define EXIT (1<<3)
 
 // Функции
-void button_handler(void);	// Обработчик нажатых кнопок
-uint8_t get_button(void);	// Получение нажатой кнопки
-void volume_mod(void);		// Настройка уровня громкости
-void menu(void);			// Главное Меню
-void set_station(uint8_t);	// Установка станции
-void init_timer_port(void);	// Настройка портов и таймеров
+void button_handler(void);  // Обработчик нажатых кнопок
+uint8_t get_button(void);   // Получение нажатой кнопки
+void volume_mod(void);      // Настройка уровня громкости
+void menu(void);            // Главное Меню
+void set_station(uint8_t);  // Установка станции
+void init_timer_port(void); // Настройка портов и таймеров
 
 #endif

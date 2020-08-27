@@ -8,7 +8,7 @@
 /*########################Constants####################################*/
 #define F_CPU 8000000UL // Frequency of the microcontroller
 
-#define ACK 0	
+#define ACK 0   
 #define NACK 1
 // I2C interface ports
 #define SDA 4
@@ -20,10 +20,10 @@
 #define i2c_delay _delay_us(5);
 
 /*#################################Functions#############################################*/
-void i2c_init(void);	// Initialization ports
-void i2c_start(void);	// Start signal
-void i2c_stop(void);	// Stop signal
-uint8_t i2c_write_byte(uint8_t); // Byte transfering
-uint8_t i2c_read_byte(uint8_t);	 // Byte recieving (1-receiving the last byte)
+void i2c_init(void);                // Initialization ports
+void i2c_start(void);               // Start signal
+void i2c_stop(void);                // Stop signal
+uint8_t i2c_write_byte(uint8_t);    // Byte transfering
+uint8_t i2c_read_byte(uint8_t);     // Byte recieving (1-receiving the last byte)
 
 #endif 

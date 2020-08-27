@@ -18,10 +18,10 @@
 #define spi_delay _delay_us(2)
 
 /*#################################Functions#############################################*/
-void spi_init(void);			// Initialization port
-void spi_start(void);			// Start signal
-void spi_stop(void);			// Stop signal
-void spi_write_byte(uint8_t);	// Byte transfering
-uint8_t spi_read_byte(void);	// Byte recieving
+void spi_init(void);            // Initialization port
+void spi_start(void);           // Start signal
+void spi_stop(void);            // Stop signal
+void spi_write_byte(uint8_t);   // Byte transfering
+uint8_t spi_read_byte(void);    // Byte recieving
 
 #endif 
